@@ -12,253 +12,17 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# ── Page Config ─────────────────────────────────────────────
+# ─── Page Config ───────────────────────────────────────────────
 st.set_page_config(
-    page_title="☁️ Cloud Classifier",
-    page_icon="🌸",
+    page_title="Cloud Service Classifier",
+    page_icon="☁️",
     layout="centered"
 )
 
-# ── Custom CSS — Girly but Professional ─────────────────────
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap');
-
-:root {
-    --rose:     #E91E8C;
-    --blush:    #F8BBD9;
-    --soft:     #FFF0F7;
-    --mauve:    #C2185B;
-    --lavender: #F3E5F5;
-    --text:     #3A1C2E;
-    --muted:    #9E6B85;
-    --white:    #FFFFFF;
-    --card:     #FFFAFD;
-}
-
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    background-color: var(--soft);
-}
-
-/* Background */
-.stApp {
-    background: linear-gradient(135deg, #FFF0F7 0%, #F3E5F5 50%, #FCE4EC 100%);
-    min-height: 100vh;
-}
-
-/* Hide streamlit default elements */
-#MainMenu, footer, header { visibility: hidden; }
-
-/* Title */
-h1 {
-    font-family: 'Playfair Display', serif !important;
-    color: var(--rose) !important;
-    font-size: 2.6rem !important;
-    text-align: center;
-    letter-spacing: -0.5px;
-    margin-bottom: 0 !important;
-}
-
-h2, h3 {
-    font-family: 'Playfair Display', serif !important;
-    color: var(--mauve) !important;
-}
-
-/* Subtitle */
-.subtitle {
-    text-align: center;
-    color: var(--muted);
-    font-size: 1rem;
-    font-weight: 300;
-    margin-bottom: 2rem;
-    letter-spacing: 0.5px;
-}
-
-/* Cards */
-.card {
-    background: var(--card);
-    border: 1px solid #F8C8DC;
-    border-radius: 20px;
-    padding: 1.8rem 2rem;
-    margin: 1.2rem 0;
-    box-shadow: 0 4px 24px rgba(233,30,140,0.07);
-}
-
-/* Divider */
-hr {
-    border: none;
-    border-top: 1.5px solid #F8BBD9;
-    margin: 1.5rem 0;
-}
-
-/* Radio buttons */
-div[role="radiogroup"] label {
-    background: var(--white);
-    border: 1.5px solid #F8BBD9;
-    border-radius: 12px;
-    padding: 0.5rem 1rem;
-    margin: 0.3rem 0;
-    transition: all 0.2s;
-    color: var(--text) !important;
-    font-size: 0.9rem;
-}
-div[role="radiogroup"] label:hover {
-    border-color: var(--rose);
-    background: #FFF0F7;
-}
-
-/* Text area */
-textarea {
-    border: 1.5px solid #F8BBD9 !important;
-    border-radius: 14px !important;
-    background: var(--white) !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 0.95rem !important;
-    color: var(--text) !important;
-    padding: 1rem !important;
-}
-textarea:focus {
-    border-color: var(--rose) !important;
-    box-shadow: 0 0 0 3px rgba(233,30,140,0.1) !important;
-}
-
-/* Button */
-.stButton > button {
-    background: linear-gradient(135deg, #E91E8C, #C2185B) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 50px !important;
-    padding: 0.7rem 2.5rem !important;
-    font-family: 'DM Sans', sans-serif !important;
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.5px !important;
-    cursor: pointer !important;
-    transition: all 0.3s !important;
-    box-shadow: 0 4px 15px rgba(233,30,140,0.3) !important;
-    width: 100% !important;
-}
-.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(233,30,140,0.4) !important;
-}
-
-/* Dataframe */
-.stDataFrame {
-    border: 1px solid #F8BBD9 !important;
-    border-radius: 14px !important;
-    overflow: hidden;
-}
-
-/* Expander */
-details {
-    border: 1.5px solid #F8BBD9 !important;
-    border-radius: 14px !important;
-    background: var(--white) !important;
-}
-
-/* Result boxes */
-.result-saas {
-    background: linear-gradient(135deg, #FCE4EC, #F8BBD9);
-    border-left: 5px solid #E91E8C;
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
-    margin-top: 1rem;
-}
-.result-paas {
-    background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
-    border-left: 5px solid #9C27B0;
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
-    margin-top: 1rem;
-}
-.result-iaas {
-    background: linear-gradient(135deg, #EDE7F6, #D1C4E9);
-    border-left: 5px solid #673AB7;
-    border-radius: 16px;
-    padding: 1.5rem 2rem;
-    margin-top: 1rem;
-}
-.result-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0;
-}
-.result-sub {
-    font-size: 0.9rem;
-    margin-top: 0.3rem;
-    opacity: 0.75;
-}
-
-/* Badge */
-.badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #E91E8C, #C2185B);
-    color: white;
-    border-radius: 50px;
-    padding: 0.2rem 0.9rem;
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    margin-left: 0.5rem;
-}
-
-/* Header bar */
-.top-bar {
-    background: linear-gradient(135deg, #E91E8C, #C2185B);
-    border-radius: 20px;
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 8px 32px rgba(233,30,140,0.25);
-}
-.top-bar h1 {
-    color: white !important;
-    margin: 0 !important;
-    font-size: 2.2rem !important;
-}
-.top-bar p {
-    color: rgba(255,255,255,0.85);
-    margin: 0.5rem 0 0 0;
-    font-size: 0.95rem;
-}
-
-/* Section labels */
-.section-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--rose);
-    margin-bottom: 0.5rem;
-}
-
-/* Accuracy pill */
-.acc-pill {
-    background: #FCE4EC;
-    color: #C2185B;
-    border-radius: 50px;
-    padding: 0.15rem 0.7rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid #F8BBD9;
-}
-
-/* Warning */
-.stAlert {
-    border-radius: 12px !important;
-    border: 1.5px solid #F8BBD9 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ── Dataset ──────────────────────────────────────────────────
+# ─── Dataset ───────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    data = [
+    descriptions = [
         ('Gmail','Web-based email service that allows users to send receive and manage emails with cloud storage and spam filtering','SaaS'),
         ('Google Docs','Online word processor that allows real-time collaboration and document editing stored in the cloud','SaaS'),
         ('Microsoft Office 365','Suite of productivity applications including Word Excel PowerPoint hosted and delivered via the cloud','SaaS'),
@@ -338,7 +102,7 @@ def load_data():
         ('Alibaba Cloud ECS','Elastic compute service offering virtual machines with flexible CPU memory and storage configurations','IaaS'),
         ('Tencent Cloud CVM','Cloud virtual machine service providing secure and reliable computing capacity in Tencent infrastructure','IaaS'),
         ('OVHcloud Public Cloud','European cloud infrastructure provider offering virtual machines storage and networking services','IaaS'),
-        ('Hetzner Cloud','Cost-effective cloud infrastructure with virtual servers and dedicated servers for developers','IaaS'),
+        ('Hetzner Cloud','Cost-effective cloud infrastructure with virtual servers and dedicated servers for developers and businesses','IaaS'),
         ('Scaleway Instances','French cloud provider offering virtual compute instances with ARM and x86 architectures','IaaS'),
         ('Fastly CDN','Content delivery network providing edge cloud infrastructure for fast and secure content delivery','IaaS'),
         ('Cloudflare CDN','Global content delivery network providing DDoS protection performance and security infrastructure','IaaS'),
@@ -356,20 +120,26 @@ def load_data():
         ('Cloudflare DNS','Fast and secure DNS service providing domain name resolution with DDoS protection','IaaS'),
         ('Azure DNS','Hosting service for DNS domains providing name resolution using Microsoft Azure infrastructure','IaaS'),
     ]
-    return pd.DataFrame(data, columns=['service_name','description','category'])
+    df = pd.DataFrame(descriptions, columns=['service_name', 'description', 'category'])
+    return df
 
 @st.cache_resource
 def train_models():
     df = load_data()
     le = LabelEncoder()
-    y  = le.fit_transform(df['category'])
+    y = le.fit_transform(df['category'])
+
     tfidf = TfidfVectorizer(max_features=500, stop_words='english', ngram_range=(1,2), sublinear_tf=True)
     X_tfidf = tfidf.fit_transform(df['description']).toarray()
-    chi2_sel = SelectKBest(chi2, k=100)
-    X_chi2   = chi2_sel.fit_transform(X_tfidf, y)
+
+    chi2_selector = SelectKBest(chi2, k=100)
+    X_chi2 = chi2_selector.fit_transform(X_tfidf, y)
+
     pca = PCA(n_components=30, random_state=42)
     X_pca = pca.fit_transform(X_chi2)
+
     X_train, X_test, y_train, y_test = train_test_split(X_pca, y, test_size=0.2, random_state=42, stratify=y)
+
     models = {
         'KNN (K=5)':           KNeighborsClassifier(n_neighbors=5),
         'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
@@ -381,91 +151,73 @@ def train_models():
         m.fit(X_train, y_train)
         acc = accuracy_score(y_test, m.predict(X_test))
         trained[name] = {'model': m, 'accuracy': acc}
-    return tfidf, chi2_sel, pca, le, trained
 
-# ── Header ───────────────────────────────────────────────────
-st.markdown("""
-<div class="top-bar">
-    <h1>🌸 Cloud Service Classifier</h1>
-    <p>Classify cloud services into SaaS · PaaS · IaaS using Machine Learning</p>
-</div>
-""", unsafe_allow_html=True)
+    return tfidf, chi2_selector, pca, le, trained
 
-# ── Load Models ──────────────────────────────────────────────
-with st.spinner("✨ Loading models..."):
-    tfidf, chi2_sel, pca, le, trained_models = train_models()
+# ─── UI ────────────────────────────────────────────────────────
+st.title("☁️ Cloud Service Classifier")
+st.markdown("**Classify cloud services into SaaS, PaaS, or IaaS using Machine Learning**")
+st.divider()
 
+# Load models
+with st.spinner("Training models..."):
+    tfidf, chi2_selector, pca, le, trained_models = train_models()
+
+# Model selector
+st.subheader("🤖 Select Model")
 model_names = list(trained_models.keys())
+model_accs  = [f"{trained_models[m]['accuracy']*100:.0f}%" for m in model_names]
+labels      = [f"{n}  —  Test Acc: {a}" for n, a in zip(model_names, model_accs)]
 
-# ── Model Selector ───────────────────────────────────────────
-st.markdown('<div class="card">', unsafe_allow_html=True)
-st.markdown('<p class="section-label">🤖 Select Model</p>', unsafe_allow_html=True)
+selected_label = st.radio("", labels, index=2)  # default: SVM
+selected_model_name = model_names[labels.index(selected_label)]
 
-labels = []
-for n in model_names:
-    acc = trained_models[n]['accuracy']*100
-    labels.append(f"{n}  —  {acc:.0f}% accuracy")
+st.divider()
 
-selected_label = st.radio("", labels, index=2, label_visibility="collapsed")
-selected_model = model_names[labels.index(selected_label)]
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ── Input ────────────────────────────────────────────────────
-st.markdown('<div class="card">', unsafe_allow_html=True)
-st.markdown('<p class="section-label">📝 Enter Service Description</p>', unsafe_allow_html=True)
+# Input
+st.subheader("📝 Enter Service Description")
 user_input = st.text_area(
-    "",
-    placeholder="e.g. Virtual machine instances with configurable CPU and RAM for running workloads in the cloud...",
-    height=130,
-    label_visibility="collapsed"
+    "Describe the cloud service:",
+    placeholder="e.g. Virtual machine instances with configurable CPU and RAM for running workloads in the cloud",
+    height=120
 )
 
-classify_btn = st.button("🔍 Classify Service")
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ── Result ───────────────────────────────────────────────────
-if classify_btn:
-    if not user_input.strip():
-        st.warning("💭 Please enter a service description first!")
+# Predict
+if st.button("🔍 Classify", use_container_width=True):
+    if user_input.strip() == "":
+        st.warning("Please enter a description first.")
     else:
         x = tfidf.transform([user_input]).toarray()
-        x = chi2_sel.transform(x)
+        x = chi2_selector.transform(x)
         x = pca.transform(x)
-        pred = le.inverse_transform(trained_models[selected_model]['model'].predict(x))[0]
+        model = trained_models[selected_model_name]['model']
+        pred  = le.inverse_transform(model.predict(x))[0]
 
-        config = {
-            'SaaS': ('result-saas', '💼', '#E91E8C', 'Software as a Service — Ready-to-use application delivered over the internet'),
-            'PaaS': ('result-paas', '🛠️', '#9C27B0', 'Platform as a Service — Development & deployment platform without server management'),
-            'IaaS': ('result-iaas', '🖥️', '#673AB7', 'Infrastructure as a Service — Virtualized compute, storage & networking resources'),
-        }
-        cls, emoji, color, desc = config[pred]
+        color_map = {'SaaS': '#4A90D9', 'PaaS': '#7ED321', 'IaaS': '#F5A623'}
+        emoji_map = {'SaaS': '💼', 'PaaS': '🛠️', 'IaaS': '🖥️'}
+
         st.markdown(f"""
-        <div class="{cls}">
-            <p class="result-title" style="color:{color}">{emoji} {pred}</p>
-            <p class="result-sub" style="color:{color}">{desc}</p>
-            <p class="result-sub" style="margin-top:0.8rem">Model used: <strong>{selected_model}</strong></p>
+        <div style="background:{color_map[pred]}22; border-left: 5px solid {color_map[pred]};
+                    padding: 20px; border-radius: 8px; margin-top:10px;">
+            <h2 style="color:{color_map[pred]}; margin:0">{emoji_map[pred]} Predicted: {pred}</h2>
+            <p style="margin:8px 0 0 0; color:#555">Model used: <b>{selected_model_name}</b></p>
         </div>
         """, unsafe_allow_html=True)
 
-st.markdown('<hr>', unsafe_allow_html=True)
+st.divider()
 
-# ── Accuracy Table ───────────────────────────────────────────
-st.markdown('<p class="section-label">📊 Model Accuracies</p>', unsafe_allow_html=True)
+# Model accuracy table
+st.subheader("📊 Model Accuracies")
 acc_df = pd.DataFrame({
     'Model': model_names,
-    'Test Accuracy': [f"{trained_models[m]['accuracy']*100:.1f}%" for m in model_names],
-    'Status': ['⭐ Best' if trained_models[m]['accuracy'] >= 0.90 and m == 'SVM (RBF Kernel)' else '' for m in model_names]
+    'Test Accuracy': [f"{trained_models[m]['accuracy']*100:.1f}%" for m in model_names]
 })
 st.dataframe(acc_df, use_container_width=True, hide_index=True)
 
-st.markdown('<hr>', unsafe_allow_html=True)
+st.divider()
 
-# ── Dataset Preview ──────────────────────────────────────────
-with st.expander("🌸 View Dataset (first 10 rows)"):
+# Dataset preview
+with st.expander("📂 View Dataset (first 10 rows)"):
     st.dataframe(load_data().head(10), use_container_width=True, hide_index=True)
 
-st.markdown("""
-<p style="text-align:center; color:#C2185B; font-size:0.8rem; margin-top:1.5rem; opacity:0.7">
-    🌸 Cloud Computing Project · Alisha Sadaqat · BCS223095 · CUST Islamabad
-</p>
-""", unsafe_allow_html=True)
+st.caption("Cloud Computing Course Project | Capital University of Science & Technology")
